@@ -1,6 +1,8 @@
 # Velog
 
-![velog_logo](https://user-images.githubusercontent.com/42988225/193479864-2d2bec73-2299-4182-90b9-1bc4034ee9ef.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/42988225/193480030-8c8189d5-fdd9-44b6-a99e-948f3729ec55.jpg" alt="velog">
+</p>
 
 Velopert님께서 작성하신 [리액트를 다루는 기술][yes24]을 보고 공부하면서 만들어 본 블로그 서비스입니다. 원래는 유튜브 채널의 라이브 코딩 동영상을 보면서 진행하려 했는데, 시간적 여유가 많지 않아 책에 포함된 기능 정도만 구현했습니다. 컴포넌트 디자인만 책의 내용을 따라했고, 기술 스택은 평소 사용해 보고 싶었던 기술 위주로 사용했습니다.
 
