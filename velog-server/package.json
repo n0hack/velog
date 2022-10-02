@@ -1,0 +1,28 @@
+{
+	"name": "velog-server",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"scripts": {
+		"dev": "nodemon --watch 'src/**/*.ts' --exec \"yarn start\" -e ts",
+		"start": "ts-node-esm -T src/main.ts"
+	},
+	"dependencies": {
+		"koa": "^2.13.4",
+		"koa-bodyparser": "^4.3.0",
+		"koa-router": "^12.0.0"
+	},
+	"devDependencies": {
+		"@types/koa": "^2.13.5",
+		"@types/koa-bodyparser": "^4.3.8",
+		"@types/koa-router": "^7.4.4",
+		"@types/node": "^18.8.0",
+		"@typescript-eslint/eslint-plugin": "^5.38.1",
+		"@typescript-eslint/parser": "^5.38.1",
+		"eslint": "^8.24.0",
+		"eslint-config-prettier": "^8.5.0",
+		"nodemon": "^2.0.20",
+		"ts-node": "^10.9.1",
+		"typescript": "^4.8.4"
+	}
+}
