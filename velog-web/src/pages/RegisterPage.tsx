@@ -1,9 +1,12 @@
-import React from 'react';
+import AuthTemplate from '@components/auth/AuthTemplate';
+import RegisterForm from '@containers/auth/RegisterForm';
 
-interface Props {}
-
-const RegisterPage = ({}: Props) => {
-  return <div>RegisterPage</div>;
+const RegisterPage = () => {
+  return (
+    <AuthTemplate>
+      <RegisterForm />
+    </AuthTemplate>
+  );
 };
 
 export default RegisterPage;

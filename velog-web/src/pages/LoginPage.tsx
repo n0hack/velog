@@ -1,9 +1,12 @@
-import React from 'react';
+import AuthTemplate from '@components/auth/AuthTemplate';
+import LoginForm from '@containers/auth/LoginForm';
 
-interface Props {}
-
-const LoginPage = ({}: Props) => {
-  return <div>LoginPage</div>;
+const LoginPage = () => {
+  return (
+    <AuthTemplate>
+      <LoginForm />
+    </AuthTemplate>
+  );
 };
 
 export default LoginPage;
