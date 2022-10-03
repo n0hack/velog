@@ -1,41 +1,27 @@
-import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import Button from '@components/common/Button';
 
-import { Button } from './Button';
-
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Example/Button',
+  title: 'Common/Button',
   component: Button,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
+  args: {
+    children: 'Button',
+  },
   argTypes: {
-    backgroundColor: { control: 'color' },
+    children: { description: '버튼의 텍스트를 설정' },
+    fullWidth: { description: '버튼의 너비를 100%로 설정' },
+    cyan: { description: '버튼의 색상을 cyan으로 설정' },
+    style: { description: '버튼의 스타일을 설정' },
+    onClick: { description: '버튼을 클릭했을 때 실행할 함수를 설정' },
   },
 } as ComponentMeta<typeof Button>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof Button> = (args) => <Button {...args} />;
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  primary: true,
-  label: 'Button',
-};
+export const Normal = Template.bind({});
+Normal.args = {};
 
-export const Secondary = Template.bind({});
-Secondary.args = {
-  label: 'Button',
-};
-
-export const Large = Template.bind({});
-Large.args = {
-  size: 'large',
-  label: 'Button',
-};
-
-export const Small = Template.bind({});
-Small.args = {
-  size: 'small',
-  label: 'Button',
+export const Cyan = Template.bind({});
+Cyan.args = {
+  cyan: true,
 };
