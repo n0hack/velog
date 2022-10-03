@@ -14,6 +14,9 @@ Velopert님께서 작성하신 <a href="http://www.yes24.com/Product/Goods/78233
 # 라이브러리 설치 & 실행
 $ yarn
 $ yarn start
+
+# 스토리북 실행
+$ yarn storybook
 ```
 
 > MongoDB의 경우 직접 설치 및 별도의 설정이 필요합니다.
