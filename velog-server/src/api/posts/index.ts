@@ -5,9 +5,14 @@ const posts = new Router();
 
 posts.get('/', postsCtrl.list);
 posts.post('/', postsCtrl.write);
-posts.get('/:id', postsCtrl.read);
-posts.delete('/:id', postsCtrl.remove);
-posts.put('/:id', postsCtrl.replace);
-posts.patch('/:id', postsCtrl.update);
+
+const post = new Router();
+
+post.get('/', postsCtrl.read);
+post.delete('/', postsCtrl.remove);
+post.patch('/', postsCtrl.update);
+
+// 미들웨어를 통한 ObjectId 검증
+posts.use('/:id', postsCtrl.checkObjetId, post.routes());
 
 export default posts;

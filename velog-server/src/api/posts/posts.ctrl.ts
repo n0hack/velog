@@ -1,103 +1,138 @@
 import { IMiddleware } from 'koa-router';
+import mongoose, { MongooseError } from 'mongoose';
+import Joi from 'joi';
+import Post from '../../model/post';
 
 type PostRequestBody = {
 	title: string;
 	body: string;
+	tags: string[];
 };
 
-let postId = 1;
+const { ObjectId } = mongoose.Types;
 
-const posts = [
-	{
-		id: 1,
-		title: '제목',
-		body: '내용',
-	},
-];
+// ObjectId 검증 미들웨어
+export const checkObjetId: IMiddleware = (ctx, next) => {
+	const { id } = ctx.params;
+
+	if (!ObjectId.isValid(id)) {
+		ctx.status = 400;
+		return;
+	}
+	return next();
+};
 
 // 포스트 작성 (POST /api/posts)
 // { title, body }
-export const write: IMiddleware = (ctx) => {
-	const { title, body } = <PostRequestBody>ctx.request.body;
-	postId += 1;
-	const post = { id: postId, title, body };
-	posts.push(post);
-	ctx.body = post;
+export const write: IMiddleware = async (ctx) => {
+	const schema = Joi.object().keys({
+		title: Joi.string().required(),
+		body: Joi.string().required(),
+		tags: Joi.array().items(Joi.string()).required(),
+	});
+
+	const result = schema.validate(ctx.request.body);
+	if (result.error) {
+		ctx.status = 400;
+		ctx.body = result.error;
+		return;
+	}
+
+	const { title, body, tags } = <PostRequestBody>ctx.request.body;
+	const post = new Post({ title, body, tags });
+	try {
+		await post.save();
+		ctx.body = post;
+	} catch (e) {
+		ctx.throw(500, e as MongooseError);
+	}
 };
 
 // 포스트 조회 (GET /api/posts)
-export const list: IMiddleware = (ctx) => {
-	ctx.body = posts;
+export const list: IMiddleware = async (ctx) => {
+	const page = parseInt((ctx.query.page as string) || '1', 10);
+
+	if (page < 1) {
+		ctx.status = 400;
+		return;
+	}
+
+	try {
+		const posts = await Post.find()
+			.sort({ _id: -1 })
+			.limit(10)
+			.lean()
+			.skip((page - 1) * 10)
+			.exec();
+		const postCount = await Post.countDocuments().exec();
+		ctx.set('Last-Page', Math.ceil(postCount / 10).toString());
+		ctx.body = posts.map((post) => ({
+			...post,
+			body:
+				(post.body as string).length < 200
+					? post.body
+					: `${post.body?.slice(0, 200)}...`,
+		}));
+	} catch (e) {
+		ctx.throw(500, e as MongooseError);
+	}
 };
 
 // 특정 포스트 조회 (GET /api/posts/:id)
-export const read: IMiddleware = (ctx) => {
+export const read: IMiddleware = async (ctx) => {
 	const { id } = ctx.params;
-	const post = posts.find((post) => post.id.toString() === id);
 
-	if (!post) {
-		ctx.status = 404;
-		ctx.body = {
-			message: '포스트가 존재하지 않습니다.',
-		};
-		return;
+	try {
+		const post = await Post.findById(id).exec();
+		if (!post) {
+			ctx.status = 404;
+			return;
+		}
+		ctx.body = post;
+	} catch (e) {
+		ctx.throw(500, e as MongooseError);
 	}
-	ctx.body = post;
 };
 
 // 특정 포스트 제거 (DELETE /api/posts/:id)
-export const remove: IMiddleware = (ctx) => {
+export const remove: IMiddleware = async (ctx) => {
 	const { id } = ctx.params;
-	const index = posts.findIndex((post) => post.id.toString() === id);
 
-	if (index === -1) {
-		ctx.status = 404;
-		ctx.body = {
-			message: '포스트가 존재하지 않습니다.',
-		};
-		return;
+	try {
+		await Post.findByIdAndRemove(id).exec();
+		ctx.status = 204;
+	} catch (e) {
+		ctx.throw(500, e as MongooseError);
 	}
-	posts.splice(index, 1);
-	ctx.status = 204;
-};
-
-// 특정 포스트 전체 수정 (PUT /api/posts/:id)
-// { title, body }
-export const replace: IMiddleware = (ctx) => {
-	const { id } = ctx.params;
-	const index = posts.findIndex((post) => post.id.toString() === id);
-
-	if (index === -1) {
-		ctx.status = 404;
-		ctx.body = {
-			message: '포스트가 존재하지 않습니다.',
-		};
-		return;
-	}
-
-	posts[index] = {
-		id: Number(id),
-		...(<PostRequestBody>ctx.request.body),
-	};
-	ctx.body = posts[index];
 };
 
 // 특정 포스트 일부 수정 (PATCH /api/posts/:id)
-export const update: IMiddleware = (ctx) => {
+export const update: IMiddleware = async (ctx) => {
 	const { id } = ctx.params;
-	const index = posts.findIndex((post) => post.id.toString() === id);
 
-	if (index === -1) {
-		ctx.status = 404;
-		ctx.body = {
-			message: '포스트가 존재하지 않습니다.',
-		};
+	const schema = Joi.object().keys({
+		title: Joi.string(),
+		body: Joi.string(),
+		tags: Joi.array().items(Joi.string()),
+	});
+
+	const result = schema.validate(ctx.request.body);
+	if (result.error) {
+		ctx.status = 400;
+		ctx.body = result.error;
 		return;
 	}
 
-	posts[index] = {
-		...posts[index],
-		...(<PostRequestBody>ctx.request.body),
-	};
-	ctx.body = posts[index];
+	try {
+		const post = await Post.findByIdAndUpdate(id, ctx.request.body, {
+			new: true,
+		}).exec();
+		if (!post) {
+			ctx.status = 404;
+			return;
+		}
+		ctx.body = post;
+	} catch (e) {
+		ctx.throw(500, e as MongooseError);
+	}
 };
