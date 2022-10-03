@@ -29,5 +29,6 @@ $ yarn start
 
 - Koa (+TypeScript)
 - Mongoose (MongoDB)
+- Joi
 - JWT
 - bcrypt
