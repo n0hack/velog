@@ -18,6 +18,8 @@
     "jsxImportSource": "@emotion/react",
     "baseUrl": "./src",
     "paths": {
+      "@components/*": ["./components/*"],
+      "@lib/*": ["./lib/*"],
       "@pages/*": ["./pages/*"]
     }
   },
