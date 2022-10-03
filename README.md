@@ -23,7 +23,7 @@ $ yarn start
 - React (+TypeScript)
 - Recoil
 - Emotion
-- Scss
+- Storybook
 
 ## Backend
 
