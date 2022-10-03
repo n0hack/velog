@@ -6,7 +6,7 @@ Velopert님께서 작성하신 <a href="http://www.yes24.com/Product/Goods/78233
 
 <br>
 
-**프로젝트 실행 환경**
+### 프로젝트 실행 환경
 
 - React: v18.0.0
 - Node: v18.9.0
