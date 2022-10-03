@@ -19,7 +19,9 @@
     "baseUrl": "./src",
     "paths": {
       "@components/*": ["./components/*"],
+      "@containers/*": ["./containers/*"],
       "@lib/*": ["./lib/*"],
+      "@modules/*": ["./modules/*"],
       "@pages/*": ["./pages/*"]
     }
   },
