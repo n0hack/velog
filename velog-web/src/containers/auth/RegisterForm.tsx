@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useNavigate } from 'react-router-dom';
 import { registerFormState } from '@modules/auth';
 import AuthForm from '@components/auth/AuthForm';
 import useAsync from '@lib/hooks/useAsync';
 import { check, register } from '@lib/api/auth';
-import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
