@@ -38,7 +38,12 @@ export const loginFormState = selector({
     return loginForm;
   },
   set: ({ set }, newValue) => {
-    if (!(newValue instanceof DefaultValue)) {
+    if (newValue instanceof DefaultValue) {
+      set(authFormState, {
+        ...authFormState,
+        login: { username: '', password: '' },
+      });
+    } else {
       set(authFormState, { ...authFormState, login: newValue });
     }
   },
@@ -51,7 +56,13 @@ export const registerFormState = selector({
     return registerForm;
   },
   set: ({ set }, newValue) => {
-    if (!(newValue instanceof DefaultValue)) {
+    if (newValue instanceof DefaultValue) {
+      set(authFormState, {
+        ...authFormState,
+        register: { username: '', password: '', passwordConfirm: '' },
+      });
+      // set(authFormState, {})
+    } else {
       set(authFormState, { ...authFormState, register: newValue });
     }
   },
