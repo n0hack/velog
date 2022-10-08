@@ -4,10 +4,12 @@ import styled from '@emotion/styled';
 import palette from '@lib/styles/palette';
 import Button from '@components/common/Button';
 import { LoginForm, RegisterForm } from '@modules/auth';
+import { AxiosError } from 'axios';
 
 interface Props {
   type: 'login' | 'register';
   form: RegisterForm | LoginForm | undefined;
+  error: AxiosError<any> | null;
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -17,7 +19,7 @@ const textMap = {
   register: '회원가입',
 };
 
-const AuthForm = ({ type, form, onSubmit, onChange }: Props) => {
+const AuthForm = ({ type, form, error, onSubmit, onChange }: Props) => {
   const text = textMap[type];
 
   if (!form) return null;
@@ -51,6 +53,7 @@ const AuthForm = ({ type, form, onSubmit, onChange }: Props) => {
             onChange={onChange}
           />
         )}
+        {error && <ErrorMessage>에러 발생!</ErrorMessage>}
         <Button cyan fullWidth style={{ marginTop: '1rem' }}>
           {text}
         </Button>
@@ -104,4 +107,11 @@ const Footer = styled.div`
       color: ${palette.gray[9]};
     }
   }
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  font-size: 0.875rem;
+  margin-top: 1rem;
 `;

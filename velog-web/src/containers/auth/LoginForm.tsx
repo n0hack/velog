@@ -66,6 +66,7 @@ const LoginForm = () => {
     <AuthForm
       type="login"
       form={form}
+      error={authError}
       onSubmit={onSubmit}
       onChange={onChange}
     />

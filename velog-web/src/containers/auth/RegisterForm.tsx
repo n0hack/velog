@@ -70,6 +70,7 @@ const RegisterForm = () => {
     <AuthForm
       type="register"
       form={form}
+      error={authError}
       onSubmit={onSubmit}
       onChange={onChange}
     />
