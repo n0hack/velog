@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import { registerFormState } from '@modules/auth';
@@ -7,7 +7,7 @@ import useAsync from '@lib/hooks/useAsync';
 import { check, register } from '@lib/api/auth';
 
 const RegisterForm = () => {
-  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>('');
   const [form, setForm] = useRecoilState(registerFormState);
   const resetForm = useResetRecoilState(registerFormState);
   const {
@@ -20,6 +20,7 @@ const RegisterForm = () => {
     true,
   );
   const { data: user } = useAsync(check, [authData]);
+  const navigate = useNavigate();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,12 +32,12 @@ const RegisterForm = () => {
 
     if (form) {
       const { username, password, passwordConfirm } = form;
-      if (username === '' || password === '' || passwordConfirm === '') {
-        console.log('모든 값을 입력해 주세요.');
+      if ([username, password, passwordConfirm].includes('')) {
+        setError('모든 값을 입력해 주세요.');
         return;
       }
       if (password !== passwordConfirm) {
-        console.log('비밀번호가 일치하지 않습니다.');
+        setError('비밀번호가 일치하지 않습니다.');
         return;
       }
       requestApi();
@@ -50,8 +51,13 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (authError) {
-      console.log('에러 발생');
+      if (authError.response?.status === 409) {
+        setError('이미 존재하는 아이디입니다.');
+        return;
+      }
+      setError('회원가입 실패');
       console.log(authError);
+      return;
     }
     if (authData) {
       console.log('회원가입 완료');
@@ -70,7 +76,7 @@ const RegisterForm = () => {
     <AuthForm
       type="register"
       form={form}
-      error={authError}
+      error={error}
       onSubmit={onSubmit}
       onChange={onChange}
     />

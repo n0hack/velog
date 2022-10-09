@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import { loginFormState } from '@modules/auth';
@@ -7,7 +7,7 @@ import useAsync from '@lib/hooks/useAsync';
 import { check, login } from '@lib/api/auth';
 
 const LoginForm = () => {
-  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>('');
   const [form, setForm] = useRecoilState(loginFormState);
   const resetForm = useResetRecoilState(loginFormState);
   const {
@@ -20,6 +20,7 @@ const LoginForm = () => {
     true,
   );
   const { data: user } = useAsync(check, [authData]);
+  const navigate = useNavigate();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,8 +32,8 @@ const LoginForm = () => {
 
     if (form) {
       const { username, password } = form;
-      if (username === '' || password === '') {
-        console.log('모든 값을 입력해 주세요.');
+      if ([username, password].includes('')) {
+        setError('모든 값을 입력해 주세요.');
         return;
       }
       requestApi();
@@ -46,8 +47,9 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (authError) {
-      console.log('에러 발생');
+      setError('로그인 실패');
       console.log(authError);
+      return;
     }
     if (authData) {
       console.log('로그인 완료');
@@ -66,7 +68,7 @@ const LoginForm = () => {
     <AuthForm
       type="login"
       form={form}
-      error={authError}
+      error={error}
       onSubmit={onSubmit}
       onChange={onChange}
     />

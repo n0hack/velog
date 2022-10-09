@@ -4,12 +4,11 @@ import styled from '@emotion/styled';
 import palette from '@lib/styles/palette';
 import Button from '@components/common/Button';
 import { LoginForm, RegisterForm } from '@modules/auth';
-import { AxiosError } from 'axios';
 
 interface Props {
   type: 'login' | 'register';
   form: RegisterForm | LoginForm | undefined;
-  error: AxiosError<any> | null;
+  error: string | null;
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -53,7 +52,7 @@ const AuthForm = ({ type, form, error, onSubmit, onChange }: Props) => {
             onChange={onChange}
           />
         )}
-        {error && <ErrorMessage>에러 발생!</ErrorMessage>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <Button cyan fullWidth style={{ marginTop: '1rem' }}>
           {text}
         </Button>
