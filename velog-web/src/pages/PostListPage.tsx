@@ -1,4 +1,5 @@
 import Button from '@components/common/Button';
+import Header from '@components/common/Header';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -6,11 +7,12 @@ interface Props {}
 
 const PostListPage = ({}: Props) => {
   const params = useParams();
-  console.log(params);
+
   return (
-    <div>
+    <>
+      <Header />
       <Button>테스트 버튼</Button>
-    </div>
+    </>
   );
 };
 
