@@ -24,3 +24,7 @@ export const register = ({ username, password }: AuthRequest) => {
 export const check = () => {
   return client.get<AuthResponse>('/api/auth/check');
 };
+
+export const logout = () => {
+  return client.post('/api/auth/logout');
+};

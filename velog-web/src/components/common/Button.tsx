@@ -1,8 +1,10 @@
 import React, { CSSProperties } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { css } from '@emotion/react';
 import palette from '@lib/styles/palette';
 
 interface Props {
+  to?: string;
   fullWidth?: boolean;
   cyan?: boolean;
   style?: CSSProperties;
@@ -11,12 +13,25 @@ interface Props {
 }
 
 const Button = ({
+  to,
   fullWidth = false,
   cyan = false,
   style,
   children,
+  onClick,
   ...rest
 }: Props) => {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    if (to) {
+      navigate(to);
+    }
+
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <button
       css={css`
@@ -36,6 +51,7 @@ const Button = ({
         }
       `}
       style={style}
+      onClick={handleClick}
       {...rest}
     >
       {children}
@@ -43,4 +59,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default React.memo(Button);

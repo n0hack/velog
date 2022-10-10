@@ -1,5 +1,10 @@
 import { atom, DefaultValue, selector } from 'recoil';
 
+export interface Auth {
+  _id: string;
+  username: string;
+}
+
 interface AuthForm {
   register?: RegisterForm;
   login?: LoginForm;
@@ -66,4 +71,9 @@ export const registerFormState = selector({
       set(authFormState, { ...authFormState, register: newValue });
     }
   },
+});
+
+export const authState = atom<Auth | null>({
+  key: 'authState',
+  default: null,
 });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
-import { loginFormState } from '@modules/auth';
+import { authState, loginFormState } from '@modules/auth';
 import AuthForm from '@components/auth/AuthForm';
 import useAsync from '@lib/hooks/useAsync';
 import { check, login } from '@lib/api/auth';
@@ -9,6 +9,7 @@ import { check, login } from '@lib/api/auth';
 const LoginForm = () => {
   const [error, setError] = useState<string | null>('');
   const [form, setForm] = useRecoilState(loginFormState);
+  const [auth, setAuth] = useRecoilState(authState);
   const resetForm = useResetRecoilState(loginFormState);
   const {
     data: authData,
@@ -54,15 +55,21 @@ const LoginForm = () => {
     if (authData) {
       console.log('로그인 완료');
       console.log(authData);
+      try {
+        localStorage.setItem('user', JSON.stringify(authData));
+        setAuth(authData);
+      } catch (e) {
+        console.log('로컬스토리지 저장 실패');
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authData, authError]);
 
   useEffect(() => {
-    if (user) {
+    if (user || auth) {
       navigate('/');
     }
-  }, [navigate, user]);
+  }, [user, auth, navigate]);
 
   return (
     <AuthForm

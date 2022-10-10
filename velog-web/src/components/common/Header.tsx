@@ -2,16 +2,32 @@ import React from 'react';
 import styled from '@emotion/styled';
 import Responsive from './Responsive';
 import Button from './Button';
+import { Auth } from '@modules/auth';
+import { Link } from 'react-router-dom';
 
-const Header = () => {
+interface Props {
+  user?: Auth | null;
+  onLogout?: () => void;
+}
+
+const Header = ({ user, onLogout }: Props) => {
   return (
     <>
       <StyledHeader>
         <Wrapper>
-          <div className="logo">VELOG</div>
-          <div className="right">
-            <Button>로그인</Button>
-          </div>
+          <Link to="/" className="logo">
+            VELOG
+          </Link>
+          {user ? (
+            <div className="right">
+              <UserInfo>{user.username}</UserInfo>
+              <Button onClick={onLogout}>로그아웃</Button>
+            </div>
+          ) : (
+            <div className="right">
+              <Button to="/login">로그인</Button>
+            </div>
+          )}
         </Wrapper>
       </StyledHeader>
       <Spacer />
@@ -44,6 +60,11 @@ const Wrapper = styled(Responsive)`
     display: flex;
     align-items: center;
   }
+`;
+
+const UserInfo = styled.div`
+  font-weight: 800;
+  margin-right: 1rem;
 `;
 
 const Spacer = styled.div`
