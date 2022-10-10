@@ -7,7 +7,7 @@ interface Props {
   onPublish?: () => void;
 }
 
-const WriteActionButton = ({ onCancel, onPublish }: Props) => {
+const WriteActionButtons = ({ onCancel, onPublish }: Props) => {
   return (
     <WriteActionButtonBlock>
       <StyledButton cyan onClick={onPublish}>
@@ -18,7 +18,7 @@ const WriteActionButton = ({ onCancel, onPublish }: Props) => {
   );
 };
 
-export default WriteActionButton;
+export default WriteActionButtons;
 
 const WriteActionButtonBlock = styled.div`
   margin: 1rem 0 3rem;
