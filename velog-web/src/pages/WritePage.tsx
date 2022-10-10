@@ -1,9 +1,13 @@
+import Responsive from '@components/common/Responsive';
+import Editor from '@components/write/Editor';
 import React from 'react';
 
-interface Props {}
-
-const WritePage = ({}: Props) => {
-  return <div>WritePage</div>;
+const WritePage = () => {
+  return (
+    <Responsive>
+      <Editor />
+    </Responsive>
+  );
 };
 
 export default WritePage;
