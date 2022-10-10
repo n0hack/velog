@@ -4,12 +4,28 @@ import styled from '@emotion/styled';
 import palette from '@lib/styles/palette';
 import 'react-quill/dist/quill.bubble.css';
 
-interface Props {}
+interface Props {
+  title: string;
+  body: string;
+  onChange: (payload: { key: 'title' | 'body'; value: string }) => void;
+}
 
-const Editor = ({}: Props) => {
+const Editor = ({ title, body, onChange }: Props) => {
+  const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({ key: 'title', value: e.target.value });
+  };
+
+  const onChangeBody = (html: string) => {
+    onChange({ key: 'body', value: html });
+  };
+
   return (
     <StyledEditor>
-      <TitleInput placeholder="제목을 입력하세요" />
+      <TitleInput
+        placeholder="제목을 입력하세요"
+        value={title}
+        onChange={onChangeTitle}
+      />
       <QuillWrapper>
         <ReactQuill
           placeholder="내용을 입력하세요"
@@ -22,6 +38,8 @@ const Editor = ({}: Props) => {
               ['blockquote', 'code-block', 'link', 'image'],
             ],
           }}
+          value={body}
+          onChange={onChangeBody}
         />
       </QuillWrapper>
     </StyledEditor>

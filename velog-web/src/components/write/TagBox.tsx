@@ -1,8 +1,11 @@
 import styled from '@emotion/styled';
 import palette from '@lib/styles/palette';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-interface Props {}
+interface Props {
+  tags: string[];
+  onChangeTags: (nextTags: string[]) => void;
+}
 
 // 렌더링 최적화를 위해 컴포넌트 분리 (input이 변경될 때, 태그 목록이 변경될 때)
 const TagItem = React.memo(
@@ -21,7 +24,7 @@ const TagList = React.memo(
   ),
 );
 
-const TagBox = ({}: Props) => {
+const TagBox = ({ tags, onChangeTags }: Props) => {
   const [input, setInput] = useState('');
   const [localTags, setLocalTags] = useState<string[]>([]);
 
@@ -30,14 +33,20 @@ const TagBox = ({}: Props) => {
       // 공백이거나 이미 존재하는 태그라면 추가하지 않음
       if (!tag) return;
       if (localTags.includes(tag)) return;
-      setLocalTags([...localTags, tag]);
+      const nextTags = [...localTags, tag];
+      setLocalTags(nextTags);
+      onChangeTags(nextTags);
     },
-    [localTags],
+    [localTags, onChangeTags],
   );
 
   const onRemove = useCallback(
-    (tag: string) => setLocalTags(localTags.filter((t) => t !== tag)),
-    [localTags],
+    (tag: string) => {
+      const nextTags = localTags.filter((t) => t !== tag);
+      setLocalTags(nextTags);
+      onChangeTags(nextTags);
+    },
+    [localTags, onChangeTags],
   );
 
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +61,10 @@ const TagBox = ({}: Props) => {
     },
     [input, insertTag],
   );
+
+  useEffect(() => {
+    setLocalTags(tags);
+  }, [tags]);
 
   return (
     <TagBoxBlock>
