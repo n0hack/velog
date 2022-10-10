@@ -1,12 +1,9 @@
 import client from './client';
 
-interface WritePostRequest {
+export interface Post {
   title: string;
   body: string;
   tags: string[];
-}
-
-interface WritePostResponse extends WritePostRequest {
   user: {
     _id: string;
     username: string;
@@ -15,6 +12,17 @@ interface WritePostResponse extends WritePostRequest {
   publishedDate: string;
 }
 
+interface WritePostRequest
+  extends Omit<Post, 'user' | '_id' | 'publishedDate'> {}
+
+interface WritePostResponse extends Post {}
+
+interface ReadPostResponse extends Post {}
+
 export const writePost = ({ title, body, tags }: WritePostRequest) => {
   return client.post<WritePostResponse>('/api/posts', { title, body, tags });
+};
+
+export const readPost = (id: string) => {
+  return client.get<ReadPostResponse>(`/api/posts/${id}`);
 };

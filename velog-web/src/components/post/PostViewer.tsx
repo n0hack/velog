@@ -1,30 +1,49 @@
 import Responsive from '@components/common/Responsive';
 import styled from '@emotion/styled';
+import { Post } from '@lib/api/posts';
 import palette from '@lib/styles/palette';
+import { AxiosError } from 'axios';
 import React from 'react';
 
-interface Props {}
+interface Props {
+  post: Post | null;
+  error: AxiosError | null;
+  loading: boolean;
+}
 
-const PostViewer = ({}: Props) => {
+const PostViewer = ({ post, error, loading }: Props) => {
+  if (error) {
+    if (error.response && error.response.status === 404) {
+      return <PostViewerBlock>존재하지 않는 포스트입니다.</PostViewerBlock>;
+    }
+    return <PostViewerBlock>오류 발생!</PostViewerBlock>;
+  }
+
+  if (loading || !post) {
+    return null;
+  }
+
+  const { title, body, tags, user, publishedDate } = post;
+
   return (
     <PostViewerBlock>
       <PostHead>
-        <h1>제목</h1>
+        <h1>{title}</h1>
         <SubInfo>
           <span>
-            <b>tester</b>
+            <b>{user.username}</b>
           </span>
-          <span>{new Date().toLocaleDateString()}</span>
+          <span>{new Date(publishedDate).toLocaleDateString()}</span>
         </SubInfo>
         <Tags>
-          <div className="tag">#태그1</div>
-          <div className="tag">#태그2</div>
-          <div className="tag">#태그3</div>
+          {tags.map((tag) => (
+            <div key={tag} className="tag">
+              {tag}
+            </div>
+          ))}
         </Tags>
       </PostHead>
-      <PostContent
-        dangerouslySetInnerHTML={{ __html: '<p>HTML <b>내용</b>입니다.</p>' }}
-      />
+      <PostContent dangerouslySetInnerHTML={{ __html: body }} />
     </PostViewerBlock>
   );
 };

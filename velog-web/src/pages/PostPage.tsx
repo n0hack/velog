@@ -1,6 +1,6 @@
 import React from 'react';
-import PostViewer from '@components/post/PostViewer';
 import HeaderContainer from '@containers/common/HeaderContainer';
+import PostViewerContainer from '@containers/post/PostViewerContainer';
 
 interface Props {}
 
@@ -8,7 +8,7 @@ const PostPage = ({}: Props) => {
   return (
     <>
       <HeaderContainer />
-      <PostViewer />
+      <PostViewerContainer />
     </>
   );
 };
