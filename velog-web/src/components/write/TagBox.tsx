@@ -1,29 +1,66 @@
 import styled from '@emotion/styled';
 import palette from '@lib/styles/palette';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 interface Props {}
 
 // 렌더링 최적화를 위해 컴포넌트 분리 (input이 변경될 때, 태그 목록이 변경될 때)
-const TagItem = React.memo(({ tag }: { tag: string }) => <Tag>#{tag}</Tag>);
+const TagItem = React.memo(
+  ({ tag, onRemove }: { tag: string; onRemove: (tag: string) => void }) => (
+    <Tag onClick={() => onRemove(tag)}>#{tag}</Tag>
+  ),
+);
 
-const TagList = React.memo(({ tags }: { tags: string[] }) => (
-  <TagListBlock>
-    {tags.map((tag) => (
-      <TagItem key={tag} tag={tag} />
-    ))}
-  </TagListBlock>
-));
+const TagList = React.memo(
+  ({ tags, onRemove }: { tags: string[]; onRemove: (tag: string) => void }) => (
+    <TagListBlock>
+      {tags.map((tag) => (
+        <TagItem key={tag} tag={tag} onRemove={onRemove} />
+      ))}
+    </TagListBlock>
+  ),
+);
 
 const TagBox = ({}: Props) => {
+  const [input, setInput] = useState('');
+  const [localTags, setLocalTags] = useState<string[]>([]);
+
+  const insertTag = useCallback(
+    (tag: string) => {
+      // 공백이거나 이미 존재하는 태그라면 추가하지 않음
+      if (!tag) return;
+      if (localTags.includes(tag)) return;
+      setLocalTags([...localTags, tag]);
+    },
+    [localTags],
+  );
+
+  const onRemove = useCallback(
+    (tag: string) => setLocalTags(localTags.filter((t) => t !== tag)),
+    [localTags],
+  );
+
+  const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  }, []);
+
+  const onSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      insertTag(input.trim());
+      setInput('');
+    },
+    [input, insertTag],
+  );
+
   return (
     <TagBoxBlock>
       <h4>태그</h4>
-      <TagForm>
-        <input placeholder="태그를 입력하세요" />
+      <TagForm onSubmit={onSubmit}>
+        <input placeholder="태그를 입력하세요" onChange={onChange} />
         <button type="submit">추가</button>
       </TagForm>
-      <TagList tags={['태그1', '태그2', '태그3']} />
+      <TagList tags={localTags} onRemove={onRemove} />
     </TagBoxBlock>
   );
 };
