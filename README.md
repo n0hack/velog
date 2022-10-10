@@ -26,6 +26,7 @@ $ yarn storybook
 - React (+TypeScript)
 - Recoil
 - Emotion
+- React Quill
 - Storybook
 
 ## Backend
