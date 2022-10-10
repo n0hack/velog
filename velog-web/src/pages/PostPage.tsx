@@ -1,20 +1,15 @@
-import { css } from '@emotion/react';
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import PostViewer from '@components/post/PostViewer';
+import HeaderContainer from '@containers/common/HeaderContainer';
 
 interface Props {}
 
 const PostPage = ({}: Props) => {
-  const params = useParams();
-  console.log(params);
   return (
-    <div
-      css={css`
-        color: red;
-      `}
-    >
-      PostPage
-    </div>
+    <>
+      <HeaderContainer />
+      <PostViewer />
+    </>
   );
 };
 
