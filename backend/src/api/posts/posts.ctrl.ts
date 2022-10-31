@@ -1,85 +1,82 @@
 import { IMiddleware } from 'koa-router';
+import mongoose, { MongooseError } from 'mongoose';
+import Post from '@model/post';
 
-let postId = 1;
+const { ObjectId } = mongoose.Types;
 
-const posts = [
-  {
-    id: 1,
-    title: '제목',
-    body: '내용',
-  },
-];
-
-export const write: IMiddleware = (ctx) => {
-  const { title, body } = ctx.request.body;
-  postId += 1;
-  const post = { id: postId, title, body };
-  posts.push(post);
-  ctx.body = post;
-};
-
-export const list: IMiddleware = (ctx) => {
-  ctx.body = posts;
-};
-
-export const read: IMiddleware = (ctx) => {
+// ObjectId 검증 미들웨어
+export const checkObjectId: IMiddleware = (ctx, next) => {
   const { id } = ctx.params;
-  const post = posts.find((p) => p.id.toString() === id);
 
-  if (!post) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '포스트가 존재하지 않습니다.',
-    };
+  if (!ObjectId.isValid(id)) {
+    ctx.status = 400;
     return;
   }
-  ctx.body = post;
+  next();
 };
 
-export const remove: IMiddleware = (ctx) => {
-  const { id } = ctx.params;
-  const index = posts.findIndex((p) => p.id.toString() === id);
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '포스트가 존재하지 않습니다.',
-    };
-    return;
+// 포스트 작성 (POST /api/posts)
+// { title, body }
+export const write: IMiddleware = async (ctx) => {
+  const { title, body, tags } = ctx.request.body;
+
+  const post = new Post({ title, body, tags });
+
+  try {
+    await post.save();
+    ctx.body = post;
+  } catch (e) {
+    ctx.throw(500, e as MongooseError);
   }
-  posts.splice(index, 1);
-  ctx.status = 204;
 };
 
-export const replace: IMiddleware = (ctx) => {
-  const { id } = ctx.params;
-  const index = posts.findIndex((p) => p.id.toString() === id);
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '포스트가 존재하지 않습니다.',
-    };
-    return;
+// 포스트 조회 (GET /api/posts)
+export const list: IMiddleware = async (ctx) => {
+  try {
+    const posts = await Post.find().exec();
+    ctx.body = posts;
+  } catch (e) {
+    ctx.throw(500, e as MongooseError);
   }
-  posts[index] = {
-    id,
-    ...ctx.request.body,
-  };
-  ctx.body = posts[index];
 };
 
-export const update: IMiddleware = (ctx) => {
+// 특정 포스트 조회 (GET /api/posts/:id)
+export const read: IMiddleware = async (ctx) => {
   const { id } = ctx.params;
-  const index = posts.findIndex((p) => p.id.toString() === id);
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '포스트가 존재하지 않습니다.',
-    };
-    return;
+  try {
+    const post = await Post.findById(id).exec();
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = post;
+  } catch (e) {
+    ctx.throw(500, e as MongooseError);
   }
-  posts[index] = {
-    ...posts[index],
-    ...ctx.request.body,
-  };
-  ctx.body = posts[index];
+};
+
+// 특정 포스트 제거 (DELETE /api/posts/:id)
+export const remove: IMiddleware = async (ctx) => {
+  const { id } = ctx.params;
+  try {
+    await Post.findByIdAndRemove(id).exec();
+    ctx.status = 204;
+  } catch (e) {
+    ctx.throw(500, e as MongooseError);
+  }
+};
+
+// 특정 포스트 일부 수정 (PATCH /api/posts/:id)
+export const update: IMiddleware = async (ctx) => {
+  const { id } = ctx.params;
+  try {
+    const post = await Post.findByIdAndUpdate(id, ctx.request.body, { new: true });
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = post;
+  } catch (e) {
+    ctx.throw(500, e as MongooseError);
+  }
 };
