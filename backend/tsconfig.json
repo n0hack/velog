@@ -5,7 +5,14 @@
     "lib": ["ESNext"],
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@model/*": ["./model/*"]
+    }
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
