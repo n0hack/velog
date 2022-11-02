@@ -3,9 +3,10 @@ import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { koaSwagger } from 'koa2-swagger-ui';
+import yamljs from 'yamljs';
 import api from './api';
 import jwtMiddleware from '@lib/jwtMiddleware';
-import createFakeData from 'createFakeData';
 
 dotenv.config();
 
@@ -24,6 +25,9 @@ mongoose
 const app = new Koa();
 const router = new Router();
 
+const spec = yamljs.load('./api.yaml');
+
+router.get('/api', koaSwagger({ routePrefix: false, swaggerOptions: { spec } }));
 router.use('/api', api.routes());
 
 app.use(bodyParser());

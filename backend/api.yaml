@@ -1,0 +1,78 @@
+swagger: '2.0'
+info:
+  title: 'Velog API'
+  description: 'Velog 클론코딩 서버 API입니다.'
+  version: '1.0.0'
+host: 'localhost:4000/api'
+schemes:
+  - 'http'
+tags:
+  - name: posts
+    description: 포스트 API
+  - name: auth
+    description: 인증 API
+paths:
+  /posts:
+    get:
+      tags:
+        - posts
+      summary: 전체 포스트 조회
+      description: 전체 포스트 조회
+      responses:
+        200:
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    post:
+      tags:
+        - posts
+      summary: 포스트 작성
+      description: 포스트 작성
+  /posts/{id}:
+    get:
+      tags:
+        - posts
+      summary: 특정 포스트 조회
+      description: 포스트 ID로 특정 포스트 조회
+      parameters:
+        - name: id
+          in: path
+          description: 포스트 ID
+          schema:
+            type: string
+    patch:
+      tags:
+        - posts
+      summary: 특정 포스트 수정
+      description: 포스트 ID로 특정 포스트 수정
+    delete:
+      tags:
+        - posts
+      summary: 특정 포스트 삭제
+      description: 포스트 ID로 특정 포스트 삭제
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: 회원가입
+      description: 회원가입
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: 로그인
+      description: 로그인
+  /auth/check:
+    get:
+      tags:
+        - auth
+      summary: 로그인 체크
+      description: 로그인 체크
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      summary: 로그아웃
+      description: 로그아웃
