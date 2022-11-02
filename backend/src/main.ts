@@ -4,6 +4,7 @@ import bodyParser from 'koa-bodyparser';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import api from './api';
+import jwtMiddleware from '@lib/jwtMiddleware';
 import createFakeData from 'createFakeData';
 
 dotenv.config();
@@ -26,6 +27,7 @@ const router = new Router();
 router.use('/api', api.routes());
 
 app.use(bodyParser());
+app.use(jwtMiddleware);
 app.use(router.routes()).use(router.allowedMethods());
 
 const port = PORT || 4000;

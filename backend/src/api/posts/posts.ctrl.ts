@@ -5,15 +5,34 @@ import Post from '@model/post';
 
 const { ObjectId } = mongoose.Types;
 
-// ObjectId 검증 미들웨어
-export const checkObjectId: IMiddleware = (ctx, next) => {
+export const getPostById: IMiddleware = async (ctx, next) => {
   const { id } = ctx.params;
 
   if (!ObjectId.isValid(id)) {
     ctx.status = 400;
     return;
   }
-  next();
+
+  try {
+    const post = await Post.findById(id);
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.state.post = post;
+    return next();
+  } catch (e) {
+    ctx.throw(500, e as MongooseError);
+  }
+};
+
+export const checkOwnPost: IMiddleware = (ctx, next) => {
+  const { user, post } = ctx.state;
+  if (post.user._id.toString() !== user._id) {
+    ctx.status = 403;
+    return;
+  }
+  return next();
 };
 
 // 포스트 작성 (POST /api/posts)
@@ -33,7 +52,7 @@ export const write: IMiddleware = async (ctx) => {
   }
 
   const { title, body, tags } = ctx.request.body;
-  const post = new Post({ title, body, tags });
+  const post = new Post({ title, body, tags, user: ctx.state.user });
 
   try {
     await post.save();
@@ -52,15 +71,22 @@ export const list: IMiddleware = async (ctx) => {
     return;
   }
 
+  const { tag, username } = ctx.query;
+  const query = {
+    ...(username ? { 'user.username': username } : {}),
+    ...(tag ? { tags: tag } : {}),
+  };
+  console.log(query);
+
   try {
-    const posts = await Post.find()
+    const posts = await Post.find(query)
       .sort({ _id: -1 })
       .limit(10)
       // lean()을 사용하면 JSON으로 반환
       .lean()
       .skip((page - 1) * 10)
       .exec();
-    const postCount = await Post.countDocuments().exec();
+    const postCount = await Post.countDocuments(query).exec();
     ctx.set('Last-Page', Math.ceil(postCount / 10).toString());
     ctx.body = posts
       // .map((post) => post.toJSON())
@@ -75,17 +101,7 @@ export const list: IMiddleware = async (ctx) => {
 
 // 특정 포스트 조회 (GET /api/posts/:id)
 export const read: IMiddleware = async (ctx) => {
-  const { id } = ctx.params;
-  try {
-    const post = await Post.findById(id).exec();
-    if (!post) {
-      ctx.status = 404;
-      return;
-    }
-    ctx.body = post;
-  } catch (e) {
-    ctx.throw(500, e as MongooseError);
-  }
+  ctx.body = ctx.state.post;
 };
 
 // 특정 포스트 제거 (DELETE /api/posts/:id)
