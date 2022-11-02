@@ -1,27 +1,53 @@
 import React, { HTMLAttributes } from 'react';
-import styled from '@emotion/styled';
 import palette from '@styles/palette';
+import { css } from '@emotion/react';
 
-interface Props extends HTMLAttributes<HTMLButtonElement> {}
+interface Props {
+  fullWidth?: boolean;
+  cyan?: boolean;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+  onClick?: () => void;
+}
 
-const Button = (props: Props) => {
-  return <StyledButton {...props} />;
+const Button = ({
+  fullWidth = false,
+  cyan = false,
+  style,
+  children,
+  onClick,
+  ...rest
+}: Props) => {
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
+  return (
+    <button
+      css={css`
+        width: ${fullWidth ? '100%' : 'auto'};
+        padding: ${fullWidth ? '0.75rem 0' : '0.25rem 1rem'};
+        color: white;
+        font-size: ${fullWidth ? '1.125rem' : '1rem'};
+        font-weight: bold;
+        background: ${cyan ? palette.cyan[5] : palette.gray[8]};
+        border: 0;
+        border-radius: 0.25rem;
+        outline: 0;
+        cursor: pointer;
+        &:hover {
+          background: ${cyan ? palette.cyan[4] : palette.gray[6]};
+        }
+      `}
+      style={style}
+      onClick={handleClick}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
 };
 
 export default Button;
-
-const StyledButton = styled.button`
-  padding: 0.25rem 1rem;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  background: ${palette.gray[8]};
-  outline: none;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background: ${palette.gray[6]};
-  }
-`;
