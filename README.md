@@ -35,3 +35,4 @@ $ yarn storybook
 - Joi
 - JWT
 - bcrypt
+- Swagger
