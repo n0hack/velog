@@ -7,6 +7,7 @@ interface Props {
   to?: string;
   fullWidth?: boolean;
   cyan?: boolean;
+  disabled?: boolean;
   style?: React.CSSProperties;
   children?: React.ReactNode;
   onClick?: () => void;
@@ -16,6 +17,7 @@ const Button = ({
   to,
   fullWidth = false,
   cyan = false,
+  disabled = false,
   style,
   children,
   onClick,
@@ -32,8 +34,15 @@ const Button = ({
     border-radius: 0.25rem;
     outline: 0;
     cursor: pointer;
+
     &:hover {
       background: ${cyan ? palette.cyan[4] : palette.gray[6]};
+    }
+
+    &:disabled {
+      color: ${palette.gray[5]};
+      background: ${palette.gray[3]};
+      cursor: not-allowed;
     }
   `;
 
@@ -50,7 +59,13 @@ const Button = ({
   }
 
   return (
-    <button css={_style} style={style} onClick={handleClick} {...rest}>
+    <button
+      css={_style}
+      style={style}
+      onClick={handleClick}
+      disabled={disabled}
+      {...rest}
+    >
       {children}
     </button>
   );
