@@ -73,7 +73,7 @@ const RegisterPage = () => {
 
       try {
         localStorage.setItem('user', JSON.stringify(authData));
-        setAuth(authData);
+        setAuth(authData.data);
       } catch (e) {
         console.log('localStorage is not working');
       }

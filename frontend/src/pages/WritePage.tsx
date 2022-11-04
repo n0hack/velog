@@ -40,7 +40,7 @@ const WritePage = () => {
 
   useEffect(() => {
     if (post) {
-      const { _id, user } = post;
+      const { _id, user } = post?.data;
       navigate(`/@${user.username}/${_id}`);
     }
 

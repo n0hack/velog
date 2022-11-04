@@ -3,7 +3,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 
 interface State<T> {
   loading: boolean;
-  data: T | null;
+  data: AxiosResponse<T, any> | null;
   error: AxiosError | null;
 }
 
@@ -22,7 +22,7 @@ function useAsync<T>(
     setState({ ...state, loading: true });
     try {
       const response = await callback();
-      setState({ loading: false, data: response.data, error: null });
+      setState({ loading: false, data: response, error: null });
     } catch (e) {
       setState({ loading: false, data: null, error: e as AxiosError });
     }
