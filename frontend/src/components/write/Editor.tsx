@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import palette from '@styles/palette';
 import React from 'react';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.bubble.css';
+import 'react-quill/dist/quill.snow.css';
 
 interface Props {
   title: string;
@@ -33,7 +33,7 @@ const Editor = ({ title, body, onChangeField }: Props) => {
       />
       <QuillWrapper>
         <ReactQuill
-          theme="bubble"
+          theme="snow"
           placeholder="내용을 작성하세요..."
           modules={{
             toolbar: [
@@ -70,12 +70,11 @@ const TitleInput = styled.input`
 const QuillWrapper = styled.div`
   .ql-editor {
     min-height: 320px;
-    padding: 0;
     font-size: 1.125rem;
     line-height: 1.5;
   }
 
   .ql-editor.ql-blank::before {
-    left: 0px;
+    /* left: 0px; */
   }
 `;
