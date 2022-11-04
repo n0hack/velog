@@ -1,9 +1,21 @@
 import { IMiddleware } from 'koa-router';
 import mongoose, { MongooseError } from 'mongoose';
 import Joi from 'joi';
+import sanitizeHtml from 'sanitize-html';
 import Post from '@model/post';
 
 const { ObjectId } = mongoose.Types;
+
+// 특정 태그와 속성만 허용 (Sanitize HTML)
+const sanitizeOption = {
+  allowedTags: ['h1', 'h2', 'b', 'i', 'u', 's', 'p', 'ul', 'ol', 'li', 'blockquote', 'a', 'img'],
+  allowedAttributes: {
+    a: ['href', 'name', 'target'],
+    img: ['src'],
+    li: ['class'],
+  },
+  allowedSchemes: ['data', 'http'],
+};
 
 export const getPostById: IMiddleware = async (ctx, next) => {
   const { id } = ctx.params;
@@ -52,7 +64,7 @@ export const write: IMiddleware = async (ctx) => {
   }
 
   const { title, body, tags } = ctx.request.body;
-  const post = new Post({ title, body, tags, user: ctx.state.user });
+  const post = new Post({ title, body: sanitizeHtml(body, sanitizeOption), tags, user: ctx.state.user });
 
   try {
     await post.save();
@@ -63,6 +75,13 @@ export const write: IMiddleware = async (ctx) => {
 };
 
 // 포스트 조회 (GET /api/posts)
+const removeHtmlAndShorten = (body: string) => {
+  const filtered = sanitizeHtml(body, {
+    allowedTags: [],
+  });
+  return filtered.length < 200 ? filtered : `${filtered.slice(0, 200)}...`;
+};
+
 export const list: IMiddleware = async (ctx) => {
   const page = parseInt((ctx.query.page as string) || '1', 10);
 
@@ -92,7 +111,7 @@ export const list: IMiddleware = async (ctx) => {
       // .map((post) => post.toJSON())
       .map((post) => ({
         ...post,
-        body: (post.body as string).length < 200 ? post.body : `${post.body?.slice(0, 200)}...`,
+        body: removeHtmlAndShorten(post.body as string),
       }));
   } catch (e) {
     ctx.throw(500, e as MongooseError);
@@ -131,8 +150,14 @@ export const update: IMiddleware = async (ctx) => {
     return;
   }
 
+  // Sanitize HTML 적용
+  const nextData = { ...ctx.request.body };
+  if (nextData.body) {
+    nextData.body = sanitizeHtml(nextData.body, sanitizeOption);
+  }
+
   try {
-    const post = await Post.findByIdAndUpdate(id, ctx.request.body, { new: true });
+    const post = await Post.findByIdAndUpdate(id, nextData, { new: true });
     if (!post) {
       ctx.status = 404;
       return;
