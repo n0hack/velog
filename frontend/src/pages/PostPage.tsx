@@ -4,13 +4,13 @@ import { PostActionButton, PostViewer } from '@components/post';
 import useAsync from '@hooks/useAsync';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '@api';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { writeFormState } from '@modules/write';
 import { authState } from '@modules/auth';
 
 const PostPage = () => {
   const auth = useRecoilValue(authState);
-  const [form, setForm] = useRecoilState(writeFormState);
+  const setForm = useSetRecoilState(writeFormState);
   const navigate = useNavigate();
   const params = useParams<{ username: string; postId: string }>();
   const {
