@@ -1,11 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import palette from '@styles/palette';
-import Button from '@components/common/Button';
+import { Button } from '@components/common';
 import { Link } from 'react-router-dom';
+import { LoginForm, RegisterForm } from '@modules/auth';
 
 interface Props {
   type: 'login' | 'register';
+  form: LoginForm | RegisterForm | undefined;
+  error: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const textMap = {
@@ -13,23 +18,29 @@ const textMap = {
   register: '회원가입',
 };
 
-const AuthForm = ({ type }: Props) => {
+const AuthForm = ({ type, form, error, onChange, onSubmit }: Props) => {
   const text = textMap[type];
+
+  if (!form) return null;
 
   return (
     <AuthFormBlock>
       <h3>{text}</h3>
-      <form>
+      <form onSubmit={onSubmit}>
         <StyledInput
           autoComplete="username"
           name="username"
           placeholder="아이디"
+          onChange={onChange}
+          value={form.username}
         />
         <StyledInput
           autoComplete="new-password"
           name="password"
           placeholder="비밀번호"
           type="password"
+          onChange={onChange}
+          value={form.password}
         />
         {type === 'register' && (
           <StyledInput
@@ -37,8 +48,11 @@ const AuthForm = ({ type }: Props) => {
             name="passwordConfirm"
             placeholder="비밀번호 확인"
             type="password"
+            onChange={onChange}
+            value={(form as RegisterForm).passwordConfirm}
           />
         )}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <Button cyan fullWidth style={{ marginTop: '1rem' }}>
           {text}
         </Button>
@@ -94,4 +108,11 @@ const Footer = styled.div`
       color: ${palette.gray[9]};
     }
   }
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  font-size: 0.875rem;
+  margin-top: 1rem;
 `;
