@@ -55,8 +55,9 @@ const PaginationBlock = styled.div`
   width: 320px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 0 auto;
-  margin-bottom: 3rem;
+  padding-bottom: 3rem;
 `;
 
 const PageNumber = styled.div``;
