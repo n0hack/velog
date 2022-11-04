@@ -95,7 +95,6 @@ export const list: IMiddleware = async (ctx) => {
     ...(username ? { 'user.username': username } : {}),
     ...(tag ? { tag } : {}),
   };
-  console.log(query);
 
   try {
     const posts = await Post.find(query)
