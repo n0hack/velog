@@ -74,7 +74,7 @@ export const list: IMiddleware = async (ctx) => {
   const { tag, username } = ctx.query;
   const query = {
     ...(username ? { 'user.username': username } : {}),
-    ...(tag ? { tags: tag } : {}),
+    ...(tag ? { tag } : {}),
   };
   console.log(query);
 
