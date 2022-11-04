@@ -3,15 +3,16 @@ import styled from '@emotion/styled';
 import React from 'react';
 
 interface Props {
+  isEdit?: boolean;
   onPublish: () => void;
   onCancel: () => void;
 }
 
-const WriteActionButton = ({ onCancel, onPublish }: Props) => {
+const WriteActionButton = ({ isEdit = false, onCancel, onPublish }: Props) => {
   return (
     <WriteActionButtonBlock>
       <StyledButton cyan onClick={onPublish}>
-        포스트 등록
+        {isEdit ? '포스트 수정' : '포스트 등록'}
       </StyledButton>
       <StyledButton onClick={onCancel}>취소</StyledButton>
     </WriteActionButtonBlock>

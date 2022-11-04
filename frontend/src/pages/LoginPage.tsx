@@ -57,7 +57,7 @@ const LoginPage = () => {
       console.log(authData);
 
       try {
-        localStorage.setItem('user', JSON.stringify(authData));
+        localStorage.setItem('user', JSON.stringify(authData.data));
         setAuth(authData.data);
       } catch (e) {
         console.log('localStorage is not working');

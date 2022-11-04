@@ -22,6 +22,8 @@ interface ReadPostsRequest {
 interface WritePostRequest
   extends Omit<Post, '_id' | 'publishedDate' | 'user'> {}
 
+interface UpdatePostRequest extends Omit<Post, 'publishedDate' | 'user'> {}
+
 const posts = {
   readPosts: ({ page, username, tag }: ReadPostsRequest) => {
     const query = queryString.stringify({ page, username, tag });
@@ -32,6 +34,9 @@ const posts = {
   },
   writePost: ({ title, body, tags }: WritePostRequest) => {
     return client.post<Post>('/api/posts', { title, body, tags });
+  },
+  updatePost: ({ _id, title, body, tags }: UpdatePostRequest) => {
+    return client.patch<Post>(`/api/posts/${_id}`, { title, body, tags });
   },
 };
 

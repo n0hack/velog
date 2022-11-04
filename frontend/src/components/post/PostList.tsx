@@ -20,7 +20,7 @@ const PostItem = ({ post }: { post: Post }) => {
         <Link to={`/@${post.user.username}/${post._id}`}>{post.title}</Link>
       </h2>
       <SubInfo
-        username="test"
+        username={post.user.username}
         publishedDate={new Date(post.publishedDate).toLocaleDateString()}
       />
       <Tags tags={post.tags} />

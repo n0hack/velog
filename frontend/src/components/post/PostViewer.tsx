@@ -9,9 +9,10 @@ interface Props {
   loading: boolean;
   post: Post | null;
   error: AxiosError | null;
+  actionButtons?: React.ReactNode;
 }
 
-const PostViewer = ({ post, error, loading }: Props) => {
+const PostViewer = ({ post, error, loading, actionButtons }: Props) => {
   if (error) {
     if (error.response && error.response.status === 404) {
       return <PostViewerBlock>존재하지 않는 포스트입니다.</PostViewerBlock>;
@@ -33,6 +34,7 @@ const PostViewer = ({ post, error, loading }: Props) => {
         />
         <Tags tags={post.tags} />
       </PostHead>
+      {actionButtons}
       <PostContent dangerouslySetInnerHTML={{ __html: post.body }} />
     </PostViewerBlock>
   );

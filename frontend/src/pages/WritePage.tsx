@@ -16,6 +16,19 @@ const WritePage = () => {
     error,
     requestApi: writePost,
   } = useAsync(() => api.posts.writePost({ ...form }), [], true);
+  const {
+    data: updatedPost,
+    error: updatedError,
+    requestApi: updatePost,
+  } = useAsync(
+    () =>
+      api.posts.updatePost({
+        _id: form.originalPost?._id as string,
+        ...form,
+      }),
+    [],
+    true,
+  );
 
   const onChangeField = useCallback(
     (payload: { key: 'title' | 'body' | 'tags'; value: string | string[] }) => {
@@ -29,25 +42,49 @@ const WritePage = () => {
   };
 
   const onPublish = () => {
-    writePost();
+    if (form.originalPost) {
+      updatePost();
+    } else {
+      writePost();
+    }
   };
 
   useEffect(() => {
+    const editedPost = localStorage.getItem('post');
+    if (editedPost) {
+      const post = JSON.parse(editedPost);
+      setForm({
+        title: post.title,
+        body: post.body,
+        tags: post.tags,
+        originalPost: post,
+      });
+    }
+
     return () => {
       resetForm();
+      localStorage.removeItem('post');
     };
-  }, [resetForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (post) {
-      const { _id, user } = post?.data;
+      const { _id, user } = post.data;
+      setForm((form) => ({ ...form, originalPost: post.data }));
       navigate(`/@${user.username}/${_id}`);
     }
 
-    if (error) {
-      console.log(error);
+    if (updatedPost) {
+      const { _id, user } = updatedPost.data;
+      setForm((form) => ({ ...form, originalPost: updatedPost.data }));
+      navigate(`/@${user.username}/${_id}`);
     }
-  }, [error, navigate, post]);
+
+    if (error || updatedError) {
+      console.log(error ?? updatedError);
+    }
+  }, [error, navigate, post, setForm, updatedError, updatedPost]);
 
   return (
     <Responsive>
@@ -57,7 +94,11 @@ const WritePage = () => {
         onChangeField={onChangeField}
       />
       <TagBox tags={form.tags} onChangeField={onChangeField} />
-      <WriteActionButton onCancel={onCancel} onPublish={onPublish} />
+      <WriteActionButton
+        onCancel={onCancel}
+        onPublish={onPublish}
+        isEdit={!!form.originalPost}
+      />
     </Responsive>
   );
 };

@@ -1,9 +1,11 @@
+import { Post } from '@api/posts';
 import { atom, DefaultValue, selector } from 'recoil';
 
 interface Write {
   title: string;
   body: string;
   tags: string[];
+  originalPost: Post | null;
 }
 
 const formState = atom<Write>({
@@ -12,6 +14,7 @@ const formState = atom<Write>({
     title: '',
     body: '',
     tags: [],
+    originalPost: null,
   },
 });
 
@@ -26,6 +29,7 @@ export const writeFormState = selector({
         title: '',
         body: '',
         tags: [],
+        originalPost: null,
       });
     } else {
       set(formState, newValue);
