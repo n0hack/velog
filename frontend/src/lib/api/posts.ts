@@ -1,6 +1,7 @@
 import client from './client';
+import queryString from 'query-string';
 
-interface Post {
+export interface Post {
   _id: string;
   title: string;
   body: string;
@@ -12,9 +13,23 @@ interface Post {
   };
 }
 
-type WritePostRequest = Omit<Post, '_id' | 'publishedDate' | 'user'>;
+interface ReadPostsRequest {
+  page?: string | (string | null)[] | null;
+  username?: string | (string | null)[] | null;
+  tag?: string | (string | null)[] | null;
+}
+
+interface WritePostRequest
+  extends Omit<Post, '_id' | 'publishedDate' | 'user'> {}
 
 const posts = {
+  readPosts: ({ page, username, tag }: ReadPostsRequest) => {
+    const query = queryString.stringify({ page, username, tag });
+    return client.get<Post[]>(`/api/posts?${query}`);
+  },
+  readPost: (id: string) => {
+    return client.get<Post>(`/api/posts/${id}`);
+  },
   writePost: ({ title, body, tags }: WritePostRequest) => {
     return client.post<Post>('/api/posts', { title, body, tags });
   },
