@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import palette from '@styles/palette';
 import { Responsive, SubInfo, Tags } from '@components/common';
 import { Post } from '@api/posts';
+import { Helmet } from 'react-helmet-async';
 
 interface Props {
   loading: boolean;
@@ -26,6 +27,9 @@ const PostViewer = ({ post, error, loading, actionButtons }: Props) => {
 
   return (
     <PostViewerBlock>
+      <Helmet>
+        <title>{post.title} - Velog</title>
+      </Helmet>
       <PostHead>
         <h1>{post.title}</h1>
         <SubInfo

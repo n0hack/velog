@@ -6,6 +6,7 @@ import { Editor, TagBox, WriteActionButton } from '@components/write';
 import { useNavigate } from 'react-router-dom';
 import useAsync from '@hooks/useAsync';
 import api from '@api';
+import { Helmet } from 'react-helmet-async';
 
 const WritePage = () => {
   const [form, setForm] = useRecoilState(writeFormState);
@@ -88,6 +89,9 @@ const WritePage = () => {
 
   return (
     <Responsive>
+      <Helmet>
+        <title>글 작성하기 - Velog</title>
+      </Helmet>
       <Editor
         title={form.title}
         body={form.body}

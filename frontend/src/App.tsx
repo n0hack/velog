@@ -2,6 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '@modules/auth';
 import Routes from '@pages/Routes';
+import { Helmet } from 'react-helmet-async';
 
 function App() {
   const setAuth = useSetRecoilState(authState);
@@ -16,7 +17,14 @@ function App() {
     }
   }, [setAuth]);
 
-  return <Routes />;
+  return (
+    <>
+      <Helmet>
+        <title>Velog</title>
+      </Helmet>
+      <Routes />
+    </>
+  );
 }
 
 export default App;
