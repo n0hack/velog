@@ -19,11 +19,9 @@ const PostListPage = () => {
     data: postList,
     error,
     loading,
-  } = useAsync(
-    () => api.posts.readPosts({ page, username, tag }),
-    [page],
-    false,
-  );
+  } = useAsync(() => api.posts.readPosts({ page, username, tag }), [page]);
+
+  console.log(postList?.data[0]);
 
   useEffect(() => {
     if (postList) {

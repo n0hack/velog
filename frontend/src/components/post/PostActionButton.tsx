@@ -1,17 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import palette from '@styles/palette';
+import AskRemoveModal from './AskRemoveModal';
 
 interface Props {
   onEdit: () => void;
+  onRemove: () => void;
 }
 
-const PostActionButton = ({ onEdit }: Props) => {
+const PostActionButton = ({ onEdit, onRemove }: Props) => {
+  const [modal, setModal] = useState(false);
+
+  const onRemoveClick = () => {
+    setModal(true);
+  };
+
+  const onConfirm = () => {
+    setModal(false);
+    onRemove();
+  };
+
+  const onCancel = () => {
+    setModal(false);
+  };
+
   return (
-    <PostActionButtonBlock>
-      <ActionButton onClick={onEdit}>수정</ActionButton>
-      <ActionButton>삭제</ActionButton>
-    </PostActionButtonBlock>
+    <>
+      <PostActionButtonBlock>
+        <ActionButton onClick={onEdit}>수정</ActionButton>
+        <ActionButton onClick={onRemoveClick}>삭제</ActionButton>
+      </PostActionButtonBlock>
+      <AskRemoveModal
+        visible={modal}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+      />
+    </>
   );
 };
 

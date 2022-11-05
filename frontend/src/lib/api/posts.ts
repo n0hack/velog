@@ -38,6 +38,9 @@ const posts = {
   updatePost: ({ _id, title, body, tags }: UpdatePostRequest) => {
     return client.patch<Post>(`/api/posts/${_id}`, { title, body, tags });
   },
+  removePost: (id: string) => {
+    return client.delete(`/api/posts/${id}`);
+  },
 };
 
 export default posts;

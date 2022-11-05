@@ -18,6 +18,11 @@ const PostPage = () => {
     data: post,
     error,
   } = useAsync(() => api.posts.readPost(params.postId!), [params.postId]);
+  const { requestApi: removePost } = useAsync(
+    () => api.posts.removePost(params.postId!),
+    [],
+    true,
+  );
 
   const onEdit = () => {
     if (post) {
@@ -26,6 +31,11 @@ const PostPage = () => {
       localStorage.setItem('post', JSON.stringify(post.data));
       navigate('/write');
     }
+  };
+
+  const onRemove = async () => {
+    await removePost();
+    navigate('/');
   };
 
   const ownPost = (auth && auth._id) === (post && post.data.user._id);
@@ -41,7 +51,9 @@ const PostPage = () => {
         loading={loading}
         post={post.data}
         error={error}
-        actionButtons={ownPost && <PostActionButton onEdit={onEdit} />}
+        actionButtons={
+          ownPost && <PostActionButton onEdit={onEdit} onRemove={onRemove} />
+        }
       />
     </>
   );
