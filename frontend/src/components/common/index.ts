@@ -1,3 +1,4 @@
+export { default as AskModal } from './AskModal';
 export { default as Button } from './Button';
 export { default as Header } from './Header';
 export { default as Responsive } from './Responsive';
